@@ -11,14 +11,14 @@ public class GenerationTest {
     @Test
     public void gridIsInitiallyEmpty() {
         var generation = new Generation();
-        assertEquals(generation.getCellCount(), 0);
+        assertEquals(generation.getAliveCellCount(), 0);
     }
 
     @Test
     public void spawnActuallySpawnsACell() {
         var generation = new Generation();
         generation.spawn(1, 1);
-        assertEquals(generation.getCellCount(), 1);
+        assertEquals(generation.getAliveCellCount(), 1);
     }
 
     @Test
@@ -31,13 +31,13 @@ public class GenerationTest {
     @Test
     public void spawnCreatesMultipleCells() {
         var g = new Generation();
-        g.spawn(1, 1);
-        g.spawn(2, 2);
-        g.spawn(1, 2);
-        g.spawn(2, 5);
-        g.spawn(2, 26);
+        g.spawn(1, 1)
+            .spawn(2, 2)
+            .spawn(1, 2)
+            .spawn(2, 5)
+            .spawn(2, 26);
 
-        assertEquals(g.getCellCount(), 5);
+        assertEquals(g.getAliveCellCount(), 5);
 
         assert (g.isCellAlive(1, 1));
         assert (g.isCellAlive(2, 2));
@@ -49,28 +49,18 @@ public class GenerationTest {
     @Test
     public void killActuallyKillsCells() {
         var generation = new Generation();
-        generation.spawn(1, 1);
-        generation.kill(1, 1);
+        generation.spawn(1, 1)
+            .kill(1, 1);
         assertFalse(generation.isCellAlive(1, 1));
-    }
-
-    @Test
-    public void killLeavesCellBodyIntact() {
-        var generation = new Generation();
-        generation.spawn(1, 1);
-        generation.kill(1, 1);
-
-        assertFalse(generation.getGrid().get(1).get(1));
     }
 
     @Test
     public void clonePerformsDeepClone() {
         var g = new Generation();
-        g.spawn(1, 1);
-        g.spawn(1, 2);
-        g.spawn(2, 2);
-
-        g.kill(1, 2);
+        g.spawn(1, 1)
+            .spawn(1, 2)
+            .spawn(2, 2)
+            .kill(1, 2);
 
         var g2 = g.clone();
 
@@ -89,5 +79,17 @@ public class GenerationTest {
 
         g2.kill(2, 2);
         assertTrue(g.isCellAlive(2, 2));
+    }
+
+    @Test
+    public void equalsIsDeep() {
+        var g = new Generation();
+        g.spawn(1, 1)
+            .spawn(1, 2)
+            .spawn(2, 2);
+
+        var g2 = g.clone();
+
+        assertEquals(g2, g);
     }
 }

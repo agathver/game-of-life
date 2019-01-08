@@ -1,57 +1,86 @@
 package org.example.gameoflife;
 
 import lombok.Getter;
+import lombok.SneakyThrows;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
-public class Generation implements Cloneable {
-
-    @Getter
-    private int cellCount;
+class Generation implements Cloneable {
 
     @Getter
-    private HashMap<Integer, HashMap<Integer, Boolean>> grid;
+    private int aliveCellCount;
 
-    public Generation() {
+    @Getter
+    private HashMap<Integer, HashSet<Integer>> grid;
+
+    Generation() {
         this.grid = new HashMap<>();
     }
 
-    public boolean isCellAlive(int x, int y) {
-        return this.grid.containsKey(x) && this.grid.get(x).containsKey(y) && this.grid.get(x).get(y);
+    boolean isCellAlive(int x, int y) {
+        return this.grid.containsKey(x) && this.grid.get(x).contains(y);
     }
 
-    public void spawn(int x, int y) {
+    Generation spawn(int x, int y) {
         if (!this.grid.containsKey(x)) {
-            this.grid.put(x, new HashMap<>());
+            this.grid.put(x, new HashSet<>());
         }
 
-        this.grid.get(x).put(y, true);
-        this.cellCount++;
+        this.grid.get(x).add(y);
+        this.aliveCellCount++;
+
+        return  this;
     }
 
-    public void kill(int x, int y) {
-        if (this.grid.containsKey(x) && this.grid.get(x).containsKey(y)) {
-            this.grid.get(x).put(y, false);
-            this.cellCount--;
+    Generation kill(int x, int y) {
+        if (this.grid.containsKey(x) && this.grid.get(x).contains(y)) {
+            this.grid.get(x).remove(y);
+            this.aliveCellCount--;
         }
+
+        return this;
     }
 
     @Override
     @SuppressWarnings({"unsafe"})
+    @SneakyThrows   // Suppress CloneNotSupportedException as everything here is cloneable
     public Generation clone() {
-        var clone = new Generation();
-
+        var clone = (Generation) super.clone();
         // Cloning the HashMap here is safe as boiled water
-        @SuppressWarnings("unchecked") var clonedGrid = (HashMap<Integer, HashMap<Integer, Boolean>>) this.grid.clone();
+        @SuppressWarnings("unchecked") var clonedGrid = (HashMap<Integer, HashSet<Integer>>) this.grid.clone();
         clone.grid = clonedGrid;
-        clone.cellCount = this.cellCount;
+        clone.aliveCellCount = this.aliveCellCount;
 
         for (var e : this.grid.entrySet()) {
             // Another HashMap clone
-            @SuppressWarnings("unchecked") var t = (HashMap<Integer, Boolean>) e.getValue().clone();
+            @SuppressWarnings("unchecked") var t = (HashSet<Integer>) e.getValue().clone();
             clone.grid.put(e.getKey(), t);
+
+            this.grid.clone();
         }
 
         return clone;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Generation)) {
+            return false;
+        }
+
+        var g = (Generation) o;
+
+        if (!g.grid.keySet().equals(this.grid.keySet())) {
+            return false;
+        }
+
+        for (var e : g.grid.entrySet()) {
+            if (!e.getValue().equals(this.grid.get(e.getKey()))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

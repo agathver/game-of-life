@@ -1,24 +1,48 @@
 package org.example.gameoflife;
 
-public class SimulationEngine {
-    public Generation tick(Generation oldG) {
+import lombok.Data;
+
+import java.util.HashSet;
+
+class SimulationEngine {
+
+    @Data
+    static class Cell {
+        final int x;
+        final int y;
+    }
+
+    Generation tick(Generation oldG) {
         var g = oldG.clone();
 
-        for (var i : g.getGrid().entrySet()) {
-            for (var j : i.getValue().entrySet()) {
-                int x = i.getKey();
-                int y = j.getKey();
+        HashSet<Cell> q = new HashSet<>();
 
-                var alive = oldG.isCellAlive(i.getKey(), j.getKey());
-                var neighbours = this.getAliveNeighbourCount(g, x, y);
+        for (var e : g.getGrid().entrySet()) {
+            int x = e.getKey();
+            for (var y : e.getValue()) {
+                q.add(new Cell(x, y));
 
-                if (alive && (neighbours < 2 || neighbours > 3)) {
-                    g.kill(x, y);
+                for (int i = x - 1; i <= x + 1; i++) {
+                    for (int j = y - 1; j <= y + 1; j++) {
+                        if (i == x && j == y) {
+                            continue;
+                        }
+                        q.add(new Cell(i, j));
+                    }
                 }
+            }
+        }
 
-                if (!alive && neighbours == 3) {
-                    g.spawn(x, y);
-                }
+        for (var p : q) {
+            var alive = oldG.isCellAlive(p.x, p.y);
+            var n = this.getAliveNeighbourCount(oldG, p);
+
+            if (alive && (n < 2 || n > 3)) {
+                g.kill(p.x, p.y);
+            }
+
+            if (!alive && n == 3) {
+                g.spawn(p.x, p.y);
             }
         }
 
@@ -29,11 +53,11 @@ public class SimulationEngine {
      * Get the number of alive neighbours around a cell, given its co-ordinates
      *
      * @param g simulation generation to work upon
-     * @param x X co-ordinate of reference cell
-     * @param y Y co-ordinate of reference cell
+     * @param c Cell to find neighbours
      * @return count of neighbours of cell at (x,y)
      */
-    private int getAliveNeighbourCount(Generation g, int x, int y) {
+    private int getAliveNeighbourCount(Generation g, Cell c) {
+        int x = c.x, y = c.y;
         int count = 0;
 
         for (int i = x - 1; i <= x + 1; i++) {
