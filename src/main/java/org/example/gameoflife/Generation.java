@@ -6,6 +6,9 @@ import lombok.SneakyThrows;
 import java.util.HashMap;
 import java.util.HashSet;
 
+/**
+ * Represents a generation of the simulation processs
+ */
 class Generation implements Cloneable {
 
     @Getter
@@ -18,10 +21,22 @@ class Generation implements Cloneable {
         this.grid = new HashMap<>();
     }
 
+    /**
+     * Checks if the cell at given co-ordinates is alive
+     * @param x x co-ordinate of the cell
+     * @param y y co-ordinate of the cell
+     * @return if the cell is alive
+     */
     boolean isCellAlive(int x, int y) {
         return this.grid.containsKey(x) && this.grid.get(x).contains(y);
     }
 
+    /**
+     * (Re)Spawn a live cell at the grid location
+     * @param x
+     * @param y
+     * @return this
+     */
     Generation spawn(int x, int y) {
         if (!this.grid.containsKey(x)) {
             this.grid.put(x, new HashSet<>());
@@ -33,6 +48,12 @@ class Generation implements Cloneable {
         return  this;
     }
 
+    /**
+     * Kill the cell at given co-ordinates if alive
+     * @param x
+     * @param y
+     * @return
+     */
     Generation kill(int x, int y) {
         if (this.grid.containsKey(x) && this.grid.get(x).contains(y)) {
             this.grid.get(x).remove(y);

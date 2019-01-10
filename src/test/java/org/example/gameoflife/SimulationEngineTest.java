@@ -138,7 +138,8 @@ public class SimulationEngineTest {
         assertEquals(g2, g3);
     }
 
-    @Test public void blinker() {
+    @Test
+    public void blinker() {
         var g = new Generation();
         g.spawn(-1, 0)
             .spawn(0, 0)

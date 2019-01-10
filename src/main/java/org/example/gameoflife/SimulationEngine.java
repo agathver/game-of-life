@@ -12,6 +12,15 @@ class SimulationEngine {
         final int y;
     }
 
+    /**
+     * Simulates a tick of the game of life
+     *
+     * We use an infinite grid with each cell represented by integer co-ordinates.
+     * The implementation loops over all the alive cells and their 8-neighbours and
+     * evaluates the conditions to determine the next generation
+     * @param oldG cellular arrangement in current generation
+     * @return arrangement in the next generation
+     */
     Generation tick(Generation oldG) {
         var g = oldG.clone();
 

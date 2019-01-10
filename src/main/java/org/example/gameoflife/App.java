@@ -3,12 +3,50 @@
  */
 package org.example.gameoflife;
 
+import java.io.*;
+import java.util.Scanner;
+
 public class App {
-    public String getGreeting() {
-        return "Hello world.";
-    }
 
     public static void main(String[] args) {
-        System.out.println(new App().getGreeting());
+
+        if(args.length < 1) {
+            System.out.println("Usage: game-of-life TICKS [generation file]");
+            System.out.println("Input is read from STDIN if no file is specified");
+            System.exit(0);
+        }
+        Scanner s;
+
+        try {
+            if (args.length == 1) {
+                s = new Scanner(new InputStreamReader(System.in));
+            } else {
+                s = new Scanner(new FileReader(args[1]));
+            }
+        } catch (FileNotFoundException f) {
+            System.err.println(args[1] + " not found");
+            System.exit(1);
+            return;
+        }
+
+        var g = new Generation();
+
+            while (s.hasNext("\\d,\\d")) {
+                var tokens = s.next("\\d,\\d").split(",");
+                int x = Integer.parseInt(tokens[0]);
+                int y = Integer.parseInt(tokens[1]);
+                g.spawn(x,y);
+            }
+
+        int ticks = Integer.parseInt(args[0]);
+
+        SimulationEngine e = new SimulationEngine();
+        Simulator smr = new Simulator(e);
+
+        var result = smr.simulate(g, ticks);
+
+        System.out.println(result.getGrid());
+
+        s.close();
     }
 }
