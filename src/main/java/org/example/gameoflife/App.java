@@ -19,6 +19,7 @@ public class App {
 
         try {
             if (args.length == 1) {
+                System.err.println("Reading input from STDIN. Press ^D to start simulation.");
                 s = new Scanner(new InputStreamReader(System.in));
             } else {
                 s = new Scanner(new FileReader(args[1]));
@@ -40,12 +41,19 @@ public class App {
 
         int ticks = Integer.parseInt(args[0]);
 
-        SimulationEngine e = new SimulationEngine();
-        Simulator smr = new Simulator(e);
+        SimulationEngine engine = new SimulationEngine();
+        Simulator smr = new Simulator(engine);
 
         var result = smr.simulate(g, ticks);
 
-        System.out.println(result.getGrid());
+        for (var e : result.getGrid().entrySet()) {
+            int x = e.getKey();
+            for (var y : e.getValue()) {
+                System.out.printf("%d,%d ", x,y);
+            }
+
+            System.out.println();
+        }
 
         s.close();
     }

@@ -15,7 +15,7 @@ class Generation implements Cloneable {
     private int aliveCellCount;
 
     @Getter
-    private HashMap<Integer, HashSet<Integer>> grid;
+    private HashMap<Integer, HashSet<Integer>> grid;    //TODO: Probably a HashSet<Point> should have sufficed
 
     Generation() {
         this.grid = new HashMap<>();

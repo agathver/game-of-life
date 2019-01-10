@@ -4,7 +4,7 @@ Simulation of [Conway's Game of Life](https://en.wikipedia.org/wiki/Conway's_Gam
 
 ## Usage
 
-java -jar game-of-life.jar org.example.gameoflife.App EPOCHS [initial state file]
+java -jar build/libs/game-of-life.jar p EPOCHS [initial state file]
 
 The initial state file describes the initial state of the cells. If not supplied, data is read
 from STDIN

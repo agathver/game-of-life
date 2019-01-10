@@ -41,3 +41,11 @@ lombok {
     version = '1.18.4'
     sha256 = ""
 }
+
+jar {
+  manifest {
+    attributes(
+      'Main-Class': 'org.example.gameoflife.App'
+    )
+  }
+}
